@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia's Bibliothek</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/styles/fonts.css">
+    <script src="library/library_enriched_short.js"></script>
+    <script src="script.js"></script>
+    <script src="scripts/templates.js"></script>
+</head>
+
+<body onload="init()">
+    <header class="header_main" w3-include-html="templates/header.html"></header>
+    <img onclick="openAddNewBookDialog()" id="scrollImage" class="scrollImage d-none" src="/assets/img/logo.png" alt="Linkes Bild">
+    <main>
+        <dialog id="main_library_dialog"></dialog>
+        <dialog id="main_library_add_book"></dialog>
+        <section class="main_library" id="main_library_element"></section>
+    </main>
+    <footer></footer>
+
+</body>
+
+</html>

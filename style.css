@@ -1,0 +1,183 @@
+:root {
+    --theme1-primary-color: #2f2b2b;
+    --theme1-secondary-color: #231c1a;
+    --theme1-card-color: #575757;
+    --theme1-font-color: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Baskervville SC';
+    color: var(--theme1-font-color)
+}
+
+.d-none {
+    opacity: 0 !important;
+    transition: all 1.0s ease;
+}
+
+body {
+    margin: 0;
+    background-color: var(--theme1-primary-color);
+}
+
+.header_main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    padding: 0 25px 0 25px;
+    background-color: var(--theme1-secondary-color);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.header_main_logo_img {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+
+}
+
+.scrollImage {
+    position: fixed;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
+    width: 120px;
+    transition: opacity 1.0s ease;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.header_main_setting_img:hover {
+    cursor: pointer;
+}
+
+.main_library {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.main_library_book {
+    height: 550px;
+    width: 300px;
+    margin: 24px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background-color: var(--theme1-card-color);
+    border: 1px solid black;
+}
+
+.main_library_book:hover {
+    cursor: pointer;
+}
+
+.main_library_figcaption {
+    margin-top: 8px;
+    height: 50px;
+    text-align: center;
+}
+
+.main_library_cover_img {
+    height: 500px;
+    width: 300px;
+    object-fit: contain;
+}
+
+dialog {
+    border: none;
+    padding: 0;
+    border-radius: 16px;
+}
+
+dialog:focus {
+    outline: none;
+}
+
+.main_library_dialog {
+    width: 550px;
+    height: 750px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--theme1-card-color);
+    scrollbar-width: none;
+    border: none;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+}
+
+.main_library_dialog_header {
+    text-align: center;
+}
+
+.main_library_dialog_cover_img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, var(--theme1-secondary-color), var(--theme1-card-color));
+}
+
+.main_library_dialog_cover_img img {
+    height: 250px;
+    width: 160px;
+    margin: 48px;
+    transform: perspective(600px) rotateY(15deg);
+    box-shadow: 8px 8px 24px rgba(0, 0, 0, 0.9);
+}
+
+.section_border_main_library {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.section_border_main_library span {
+    width: 450px;
+    height: 2px;
+    border-bottom: 1px solid white;
+}
+
+.main_library_dialog_info_section {
+    margin: 36px 0 36px 0;
+}
+
+.main_library_dialog_price_rating {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 36px;
+}
+
+.main_library_dialog_info_element {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px 0 48px;
+}
+
+.main_book_summary {
+    padding: 8px 48px 8px 48px;
+    text-align: justify;
+}
+
+.main_library_add_book {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--theme1-card-color);
+    gap: 16px; 
+    
+}
+
+.main_library_add_book input {
+    width: 75%;
+    color: var(--theme1-primary-color); 
+    font-size: 18px; 
+    font-family: 'Baskervville SC';
+}
