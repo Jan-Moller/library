@@ -16,6 +16,10 @@
     transition: all 1.0s ease;
 }
 
+.hidden {
+    overflow: hidden;
+}
+
 body {
     margin: 0;
     background-color: var(--theme1-primary-color);
@@ -32,6 +36,7 @@ body {
 }
 
 .header_main_logo_img {
+    cursor: pointer;
     height: 100px;
     width: 100px;
     object-fit: cover;
@@ -144,6 +149,16 @@ dialog::backdrop {
 
 .main_library_dialog_info_section {
     margin: 36px 0 36px 0;
+    position: relative;
+}
+
+.main_library_edit_book_info_icon {
+    cursor: pointer;
+    position: absolute;
+    top: -25px;
+    right: 15px;
+    height: 18px;
+    width: 18px;
 }
 
 .main_library_dialog_price_rating {
@@ -171,17 +186,17 @@ dialog::backdrop {
     justify-content: center;
     align-items: center;
     background-color: var(--theme1-card-color);
-    gap: 10px; 
-    
+    gap: 10px;
+
 }
 
 .main_library_add_book input {
     width: 75%;
-    color: var(--theme1-primary-color); 
-    font-size: 18px; 
+    color: var(--theme1-primary-color);
+    font-size: 18px;
     font-family: 'Baskervville SC';
 }
 
 .main_library_add_book button {
-    background-color: var(--theme1-secondary-color); 
+    background-color: var(--theme1-secondary-color);
 }

@@ -5,7 +5,7 @@ let library = [
     "subtitle": null,
     "series": null,
     "volume": null,
-    "author": "?",
+    "author": null,
     "illustrator": null,
     "narrator": null,
     "translator": null,
