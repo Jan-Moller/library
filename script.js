@@ -30,7 +30,7 @@ function renderLibraryMain() {
 function openBookDetails(i) {
     let bookRef = document.getElementById('main_library_dialog');
     bookRef.innerHTML = '';
-    bookRef.innerHTML = getMainLibraryBookInfo(i);
+    bookRef.innerHTML = getTemplateMainLibraryBookInfo(i);
     bookRef.showModal();
 
 }
@@ -38,34 +38,50 @@ function openBookDetails(i) {
 function openAddNewBookDialog() {
     let newBookRef = document.getElementById('main_library_add_book');
     newBookRef.innerHTML = '';
-    newBookRef.innerHTML = /*html*/ `
-    <form onsubmit="addNewBookToLibrary()" class="main_library_add_book main_library_dialog">
-        <label for="main_library_book_title">Title</label>
-        <input type="text" name="title" id="main_library_book_title">
-        <label for="main_library_book_price">Preis</label>
-        <input type="number" name="price" id="main_library_book_price">
-        <label for="main_library_book_status">Status</label>
-        <input type="text" name="status" id="main_library_book_status">
-        <label for="main_library_book_rating">Bewertung</label>
-        <input type="text" name="rating" id="main_library_book_rating">
-        <label for="main_library_book_author">Autor</label>
-        <input type="text" name="author" id="main_library_book_author">
-        <label for="main_library_book_publisher">Verlag</label>
-        <input type="text" name="publisher" id="main_library_book_publisher">
-        <label for="main_library_book_edition">Auflage</label>
-        <input type="text" name="edition" id="main_library_book_edition">
-        <label for="main_library_book_edition">Zusammenfassung</label>
-        <input type="text" name="edition" id="main_library_book_edition">
-        <label for="main_library_cover_img">Link des Buch-Covers</label>
-         <input type="url" name="uploadedimageurl" id="main_library_cover_img">
-    </form>
-    `
+    newBookRef.innerHTML = getTemplateAddNewBook();
     newBookRef.showModal();
 }
 
-function addNewBookToLibrary() {
+function addNewBookToLibrary(event) {
+    event.preventDefault();
+    let title = document.getElementById('main_library_book_title');
+    let price = document.getElementById('main_library_book_price');
+    let status = document.getElementById('main_library_book_status');
+    let rating = document.getElementById('main_library_book_rating');
+    let author = document.getElementById('main_library_book_author');
+    let publisher = document.getElementById('main_library_book_publisher');
+    let publishedYear = document.getElementById('main_library_book_published_year')
+    let edition = document.getElementById('main_library_book_edition');
+    let summary = document.getElementById('main_library_book_summary');
+    let cover = document.getElementById('main_library_cover_img');
 
+    let titleValue = title?.value.trim() || '';
+    let priceValue = parseFloat(price?.value) || 0;
+    let statusValue = status?.value || '';
+    let ratingValue = parseFloat(rating?.value) || 0;
+    let authorValue = author?.value.trim() || '';
+    let publisherValue = publisher?.value.trim() || '';
+    let publishedYearValue = publishedYear?.value.trim() || '';
+    let editionValue = edition?.value.trim() || '';
+    let summaryValue = summary?.value.trim() || '';
+    let coverValue = cover?.value.trim() || '';
+
+    library.push({
+        "title": `${titleValue}`,
+        "author": `${authorValue}`,
+        "publisher": `${publisherValue}`,
+        "year_published": `${publishedYearValue}`,
+        "edition": `${editionValue}`,
+        "summary": `${summaryValue}`,
+        "listprice": `${priceValue}`,
+        "rating": `${ratingValue}`,
+        "status": `${statusValue}`,
+        "uploadedimageurl": `${coverValue}`
+    }
+    )
+   renderLibraryMain(); 
 }
+
 
 async function includeHTML() {
     let includeElements = document.querySelectorAll('[w3-include-html]');

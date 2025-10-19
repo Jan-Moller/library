@@ -1,4 +1,4 @@
-function getMainLibraryBookInfo(i) {
+function getTemplateMainLibraryBookInfo(i) {
     return /*html*/ `
      <article class="main_library_dialog">
         <header class="main_library_dialog_header"><h2>${library[i].title}</h2></header>
@@ -19,5 +19,33 @@ function getMainLibraryBookInfo(i) {
         <p class="main_book_summary">${library[i].summary}</p>
         
     </article>
+    `
+}
+
+function getTemplateAddNewBook() {
+    return /*html*/ `
+    <form onsubmit="addNewBookToLibrary(event); return false" return="false" class="main_library_add_book main_library_dialog">
+        <label for="main_library_book_title">Title</label>
+        <input type="text" name="title" id="main_library_book_title">
+        <label for="main_library_book_price">Preis</label>
+        <input min="0" step="0.01" type="number" name="price" id="main_library_book_price">
+        <label for="main_library_book_status">Status</label>
+        <input type="text" name="status" id="main_library_book_status">
+        <label for="main_library_book_rating">Bewertung</label>
+        <input min="0" max="5" step="1" type="text" name="rating" id="main_library_book_rating">
+        <label for="main_library_book_author">Autor</label>
+        <input type="text" name="author" id="main_library_book_author">
+        <label for="main_library_book_publisher">Verlag</label>
+        <input type="text" name="publisher" id="main_library_book_publisher">
+        <label for="main_library_book_published_year">Erscheinungsjahr</label>
+        <input type="text" name="published year" id="main_library_book_published_year">
+        <label for="main_library_book_edition">Auflage</label>
+        <input type="text" name="edition" id="main_library_book_edition">
+        <label for="main_library_book_summary">Zusammenfassung</label>
+        <input type="text" name="summary" id="main_library_book_summary">
+        <label for="main_library_cover_img">Link des Buch-Covers</label>
+        <input type="url" name="uploadedimageurl" id="main_library_cover_img">
+        <button>Speichern</button>
+    </form>
     `
 }
