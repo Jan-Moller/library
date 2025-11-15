@@ -1,7 +1,42 @@
+const BASE_URL = "https://julias-library-default-rtdb.europe-west1.firebasedatabase.app/";
+let library = []; 
+
 async function init() {
     await includeHTML();
+    await createBookLibraryArray(); 
     enableBackdropClose();
     renderLibraryMain();
+ 
+}
+
+async function getData(path="") {
+let response = await fetch(BASE_URL + path + ".json")
+return responseToJson = await response.json();
+}
+
+async function createBookLibraryArray() {
+ let libraryJson = await getData("/books");
+ let libraryJsonKeyArray = Object.keys(libraryJson);
+ console.log(libraryJsonKeyArray);
+
+ for (let i = 0; i < libraryJsonKeyArray.length; i++) {
+    const key = libraryJsonKeyArray[i];
+    library.push({
+        id: key,
+        author: libraryJson[key].author,
+        edition: libraryJson[key].edition,
+        listprice: libraryJson[key].listprice,
+        publisher: libraryJson[key].publisher,
+        rating: libraryJson[key].rating,
+        status: libraryJson[key].status,
+        summary: libraryJson[key].summary,
+        title: libraryJson[key].title,
+        uploadedimageurl: libraryJson[key].uploadedimageurl,
+        year_published: libraryJson[key].year_published,
+    })
+    }
+ console.log(library);
+ 
 }
 
 function enableBackdropClose() {
@@ -53,7 +88,6 @@ function checkIfRatingIsNull(i) {
 }
 
 function renderLibraryMain() {
-    getFromLocalStorage();
     let titleRef = document.getElementById('main_library_element');
     titleRef.innerHTML = '';
 
