@@ -1,7 +1,6 @@
 const BASE_URL = "https://julias-library-default-rtdb.europe-west1.firebasedatabase.app/";
 let library = [];
 
-// Ensures the browser can repaint between heavy loop iterations
 const nextFrame = () => new Promise(requestAnimationFrame);
 
 async function init() {
@@ -22,9 +21,9 @@ function startLoadingSpinner() {
 function endLoadingSpinner() {
     document.getElementById('loader').classList.add('d-none');
     document.getElementById('loader').style.zIndex = "-1";
-    document.querySelector('header').classList.remove('d-none'); 
-    document.querySelector('main').classList.remove('d-none'); 
-    
+    document.querySelector('header').classList.remove('d-none');
+    document.querySelector('main').classList.remove('d-none');
+
 }
 
 
@@ -34,7 +33,37 @@ async function getData(path = "") {
 }
 
 
+async function postData(path = "", data = {}) {
+    let response = await fetch(BASE_URL + path + ".json", {
+        method: "POST",
+        header: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+}
+
+async function putData(path = "", data = {}) {
+    let response = await fetch(BASE_URL + path + ".json", {
+        method: "PUT",
+        header: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+}
+
+
 async function createBookLibraryArray() {
+    try {
+        await pushBookInLibrary()
+    } catch (error) {
+        endLoadingSpinner();
+    }
+}
+
+
+async function pushBookInLibrary() {
     let libraryJson = await getData("/books");
     let libraryJsonKeyArray = Object.keys(libraryJson);
 
@@ -120,13 +149,25 @@ async function renderLibraryMain() {
     for (let i = 0; i < library.length; i++) {
         const title = library[i].title;
         titleRef.innerHTML += /*html*/`
-        <figure class="main_library_book" onclick="openBookDetails(${i})">
-            <figcaption class="main_library_figcaption">${title}</figcaption>
-            <img class="main_library_cover_img" src="${library[i].uploadedimageurl}">
-        </figure>`
+        <div id="book_overview_id_${i}">
+            <figure class="main_library_book" onclick="openBookDetails(${i})">
+                <figcaption class="main_library_figcaption">${title}</figcaption>
+                <img class="main_library_cover_img" src="${library[i].uploadedimageurl}">
+            </figure>
+        </div>`
 
         await renderStatusMessage(i, maxBooks)
     }
+}
+
+function renderNewBookInLibrary(title, cover, i) {
+    let titleRef = document.getElementById('main_library_element');
+
+    titleRef.innerHTML += /*html*/`
+        <figure class="main_library_book" onclick="openBookDetails(${i})">
+            <figcaption class="main_library_figcaption">${title}</figcaption>
+            <img class="main_library_cover_img" src="${cover}">
+        </figure>`
 }
 
 
@@ -155,7 +196,7 @@ function closeAddNewBookDialog() {
 }
 
 
-function addNewBookToLibrary(event) {
+async function addNewBookToLibrary(event) {
     event.preventDefault();
     let title = document.getElementById('main_library_book_title');
     let price = document.getElementById('main_library_book_price');
@@ -179,7 +220,7 @@ function addNewBookToLibrary(event) {
     let summaryValue = summary?.value.trim() || '';
     let coverValue = cover?.value.trim() || '';
 
-    library.push({
+    await postData("/books", data = {
         "title": `${titleValue}`,
         "author": `${authorValue}`,
         "publisher": `${publisherValue}`,
@@ -190,9 +231,29 @@ function addNewBookToLibrary(event) {
         "rating": `${ratingValue}`,
         "status": `${statusValue}`,
         "uploadedimageurl": `${coverValue}`
-    }
-    )
-    renderLibraryMain();
+    })
+
+    await updateBookInLibraryArray(libraryJsonKeyArray[libraryJsonKeyArray.length - 1], titleValue, authorValue, publisherValue, publishedYearValue, editionValue, summaryValue, priceValue, ratingValue, statusValue, coverValue)
+    renderNewBookInLibrary(titleValue, coverValue, library.length);
+}
+
+async function updateBookInLibraryArray(key, titleValue, authorValue, publisherValue, publishedYearValue, editionValue, summaryValue, priceValue, ratingValue, statusValue, coverValue) {
+    let libraryJson = await getData("/books");
+    let libraryJsonKeyArray = Object.keys(libraryJson);
+
+    library.push({
+        "id": `${key}`,
+        "title": `${titleValue}`,
+        "author": `${authorValue}`,
+        "publisher": `${publisherValue}`,
+        "year_published": `${publishedYearValue}`,
+        "edition": `${editionValue}`,
+        "summary": `${summaryValue}`,
+        "listprice": `${priceValue}`,
+        "rating": `${ratingValue}`,
+        "status": `${statusValue}`,
+        "uploadedimageurl": `${coverValue}`
+    })
 }
 
 
@@ -240,26 +301,35 @@ function updateBookToLibrary(event, i) {
     library[i].status = statusValue;
     library[i].uploadedimageurl = coverValue;
 
-    renderLibraryMain();
+    putData(`/books/${library[i].id}`, data = {
+        "title": `${titleValue}`,
+        "author": `${authorValue}`,
+        "publisher": `${publisherValue}`,
+        "year_published": `${publishedYearValue}`,
+        "edition": `${editionValue}`,
+        "summary": `${summaryValue}`,
+        "listprice": `${priceValue}`,
+        "rating": `${ratingValue}`,
+        "status": `${statusValue}`,
+        "uploadedimageurl": `${coverValue}`
+    })
     openBookDetails(i);
+    renderExistingBookInLibrary(titleValue, coverValue, i);
+}
+
+
+function renderExistingBookInLibrary(title, cover, i) {
+    let bookRef = document.getElementById(`book_overview_id_${i}`);
+    bookRef.innerHTML = /*html*/`
+        <figure class="main_library_book" onclick="openBookDetails(${i})">
+            <figcaption class="main_library_figcaption">${title}</figcaption>
+            <img class="main_library_cover_img" src="${cover}">
+        </figure>`
 }
 
 
 function saveToLocalStorage() {
     localStorage.setItem("library", JSON.stringify(library));
-}
-
-
-function getFromLocalStorage() {
-    if (!JSON.parse(localStorage.getItem("library"))) {
-        checkIfLibraryValuesAreNull();
-        return library
-    }
-    else {
-        library = JSON.parse(localStorage.getItem("library"));
-        checkIfLibraryValuesAreNull();
-    }
-
 }
 
 
