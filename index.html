@@ -12,9 +12,20 @@
 </head>
 
 <body onload="init()">
-    <header class="header_main" w3-include-html="templates/header.html"></header>
-    <img onclick="openAddNewBookDialog()" id="scrollImage" class="scrollImage d-none" src="/assets/img/logo.png" alt="Linkes Bild">
-    <main>
+
+    <header class="d-none" w3-include-html="templates/header.html"></header>
+
+    <section id="loader" class="loading_screen d-none">
+        <div class="loader">
+            <img src="assets/img/logo.png" alt="">
+        </div>
+        <p> Es wurden <span id="current_books_loaded">0</span> von <span id="max_amount_books_loading">0</span> Büchern
+            geladen</p>
+    </section>
+
+    <img onclick="openAddNewBookDialog()" id="scrollImage" class="scrollImage d-none" src="/assets/img/logo.png"
+        alt="Linkes Bild">
+    <main class="d-none">
         <dialog id="main_library_dialog"></dialog>
         <dialog id="main_library_add_book"></dialog>
         <section class="main_library" id="main_library_element"></section>

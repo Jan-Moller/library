@@ -1,43 +1,71 @@
 const BASE_URL = "https://julias-library-default-rtdb.europe-west1.firebasedatabase.app/";
-let library = []; 
+let library = [];
+
+// Ensures the browser can repaint between heavy loop iterations
+const nextFrame = () => new Promise(requestAnimationFrame);
 
 async function init() {
     await includeHTML();
-    await createBookLibraryArray(); 
+    startLoadingSpinner();
+    await createBookLibraryArray();
     enableBackdropClose();
-    renderLibraryMain();
- 
+    await renderLibraryMain();
+    endLoadingSpinner();
 }
 
-async function getData(path="") {
-let response = await fetch(BASE_URL + path + ".json")
-return responseToJson = await response.json();
+
+function startLoadingSpinner() {
+    document.getElementById('loader').classList.remove('d-none');
 }
+
+
+function endLoadingSpinner() {
+    document.getElementById('loader').classList.add('d-none');
+    document.getElementById('loader').style.zIndex = "-1";
+    document.querySelector('header').classList.remove('d-none'); 
+    document.querySelector('main').classList.remove('d-none'); 
+    
+}
+
+
+async function getData(path = "") {
+    let response = await fetch(BASE_URL + path + ".json")
+    return responseToJson = await response.json();
+}
+
 
 async function createBookLibraryArray() {
- let libraryJson = await getData("/books");
- let libraryJsonKeyArray = Object.keys(libraryJson);
- console.log(libraryJsonKeyArray);
+    let libraryJson = await getData("/books");
+    let libraryJsonKeyArray = Object.keys(libraryJson);
 
- for (let i = 0; i < libraryJsonKeyArray.length; i++) {
-    const key = libraryJsonKeyArray[i];
-    library.push({
-        id: key,
-        author: libraryJson[key].author,
-        edition: libraryJson[key].edition,
-        listprice: libraryJson[key].listprice,
-        publisher: libraryJson[key].publisher,
-        rating: libraryJson[key].rating,
-        status: libraryJson[key].status,
-        summary: libraryJson[key].summary,
-        title: libraryJson[key].title,
-        uploadedimageurl: libraryJson[key].uploadedimageurl,
-        year_published: libraryJson[key].year_published,
-    })
+    for (let i = 0; i < libraryJsonKeyArray.length; i++) {
+        const key = libraryJsonKeyArray[i];
+        library.push({
+            id: key,
+            author: libraryJson[key].author,
+            edition: libraryJson[key].edition,
+            listprice: libraryJson[key].listprice,
+            publisher: libraryJson[key].publisher,
+            rating: libraryJson[key].rating,
+            status: libraryJson[key].status,
+            summary: libraryJson[key].summary,
+            title: libraryJson[key].title,
+            uploadedimageurl: libraryJson[key].uploadedimageurl,
+            year_published: libraryJson[key].year_published,
+        })
     }
- console.log(library);
- 
 }
+
+
+async function renderStatusMessage(i, maxBooks) {
+    let currentBookRef = document.getElementById('current_books_loaded');
+    let maxBookRef = document.getElementById('max_amount_books_loading');
+    let currentBook = i + 1
+    if (maxBookRef) maxBookRef.innerHTML = maxBooks;
+    if (currentBookRef) currentBookRef.innerHTML = currentBook;
+    await nextFrame();
+}
+
 
 function enableBackdropClose() {
     document.querySelectorAll('dialog').forEach(dialog => {
@@ -58,14 +86,6 @@ function enableBackdropClose() {
     });
 }
 
-window.addEventListener('scroll', () => {
-    const scrollImage = document.getElementById('scrollImage');
-
-    if (window.scrollY > 120) {
-        scrollImage.classList.remove('d-none');
-    }
-    else (scrollImage.classList.add('d-none'))
-});
 
 function checkIfLibraryValuesAreNull() {
     for (let i = 0; i < library.length; i++) {
@@ -77,8 +97,8 @@ function checkIfLibraryValuesAreNull() {
             }
         }
     }
-    saveToLocalStorage();
 }
+
 
 function checkIfRatingIsNull(i) {
     let ratingRef = document.getElementById('book_rating');
@@ -87,9 +107,15 @@ function checkIfRatingIsNull(i) {
     }
 }
 
-function renderLibraryMain() {
+
+async function renderLibraryMain() {
     let titleRef = document.getElementById('main_library_element');
     titleRef.innerHTML = '';
+
+    const maxBooks = library.length;
+    const maxBookRef = document.getElementById('max_amount_books_loading');
+    if (maxBookRef) maxBookRef.innerHTML = maxBooks;
+    await nextFrame();
 
     for (let i = 0; i < library.length; i++) {
         const title = library[i].title;
@@ -98,6 +124,8 @@ function renderLibraryMain() {
             <figcaption class="main_library_figcaption">${title}</figcaption>
             <img class="main_library_cover_img" src="${library[i].uploadedimageurl}">
         </figure>`
+
+        await renderStatusMessage(i, maxBooks)
     }
 }
 
@@ -111,6 +139,7 @@ function openBookDetails(i) {
     bookRef.showModal();
 }
 
+
 function openAddNewBookDialog() {
     let newBookRef = document.getElementById('main_library_add_book');
     document.querySelector('body').classList.add('hidden');
@@ -119,10 +148,12 @@ function openAddNewBookDialog() {
     newBookRef.showModal();
 }
 
+
 function closeAddNewBookDialog() {
     let newBookRef = document.getElementById('main_library_add_book');
     newBookRef.close();
 }
+
 
 function addNewBookToLibrary(event) {
     event.preventDefault();
@@ -161,9 +192,9 @@ function addNewBookToLibrary(event) {
         "uploadedimageurl": `${coverValue}`
     }
     )
-    saveToLocalStorage();
     renderLibraryMain();
 }
+
 
 function openEditBookDialog(i) {
     let newBookRef = document.getElementById('main_library_add_book');
@@ -172,6 +203,7 @@ function openEditBookDialog(i) {
     newBookRef.innerHTML = getTemplateEditBookInformation(i);
     newBookRef.showModal();
 }
+
 
 function updateBookToLibrary(event, i) {
     event.preventDefault();
@@ -208,14 +240,15 @@ function updateBookToLibrary(event, i) {
     library[i].status = statusValue;
     library[i].uploadedimageurl = coverValue;
 
-    saveToLocalStorage();
     renderLibraryMain();
     openBookDetails(i);
 }
 
+
 function saveToLocalStorage() {
     localStorage.setItem("library", JSON.stringify(library));
 }
+
 
 function getFromLocalStorage() {
     if (!JSON.parse(localStorage.getItem("library"))) {
@@ -228,6 +261,7 @@ function getFromLocalStorage() {
     }
 
 }
+
 
 async function includeHTML() {
     let includeElements = document.querySelectorAll('[w3-include-html]');
@@ -244,5 +278,11 @@ async function includeHTML() {
 }
 
 
+window.addEventListener('scroll', () => {
+    const scrollImage = document.getElementById('scrollImage');
 
-window.addEventListener('DOMContentLoaded', init);
+    if (window.scrollY > 120) {
+        scrollImage.classList.remove('d-none');
+    }
+    else (scrollImage.classList.add('d-none'))
+});
