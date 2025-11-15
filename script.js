@@ -164,10 +164,13 @@ function renderNewBookInLibrary(title, cover, i) {
     let titleRef = document.getElementById('main_library_element');
 
     titleRef.innerHTML += /*html*/`
-        <figure class="main_library_book" onclick="openBookDetails(${i})">
-            <figcaption class="main_library_figcaption">${title}</figcaption>
-            <img class="main_library_cover_img" src="${cover}">
-        </figure>`
+    <div id="book_overview_id_${i}">
+            <figure class="main_library_book" onclick="openBookDetails(${i})">
+                <figcaption class="main_library_figcaption">${title}</figcaption>
+                <img class="main_library_cover_img" src="${library[i].uploadedimageurl}">
+            </figure>
+        </div>
+`
 }
 
 
@@ -233,16 +236,16 @@ async function addNewBookToLibrary(event) {
         "uploadedimageurl": `${coverValue}`
     })
 
-    await updateBookInLibraryArray(libraryJsonKeyArray[libraryJsonKeyArray.length - 1], titleValue, authorValue, publisherValue, publishedYearValue, editionValue, summaryValue, priceValue, ratingValue, statusValue, coverValue)
-    renderNewBookInLibrary(titleValue, coverValue, library.length);
+    await updateBookInLibraryArray(titleValue, authorValue, publisherValue, publishedYearValue, editionValue, summaryValue, priceValue, ratingValue, statusValue, coverValue)
+    renderNewBookInLibrary(titleValue, coverValue, library.length - 1);
 }
 
-async function updateBookInLibraryArray(key, titleValue, authorValue, publisherValue, publishedYearValue, editionValue, summaryValue, priceValue, ratingValue, statusValue, coverValue) {
+async function updateBookInLibraryArray(titleValue, authorValue, publisherValue, publishedYearValue, editionValue, summaryValue, priceValue, ratingValue, statusValue, coverValue) {
     let libraryJson = await getData("/books");
     let libraryJsonKeyArray = Object.keys(libraryJson);
 
     library.push({
-        "id": `${key}`,
+        "id": `${libraryJsonKeyArray[libraryJsonKeyArray.length - 1]}`,
         "title": `${titleValue}`,
         "author": `${authorValue}`,
         "publisher": `${publisherValue}`,
